@@ -8,13 +8,12 @@ import { LOGOUT } from '../../store/actionTypes/authMethods';
 
 const Navbar = () => {
 
-    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.AuthReducer);
-
-    const logout = async () => {
-        await axios.get('/logout', { withCredentials: true });
-        dispatch({ type: LOGOUT })
-    }
+    const dispatch = useDispatch();
+    const logout = () => {
+        localStorage.removeItem('myToken');
+        dispatch({ type: LOGOUT });
+    };
 
     const RenderMenu = () => {
         if (user) {

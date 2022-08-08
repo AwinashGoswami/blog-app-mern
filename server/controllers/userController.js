@@ -30,15 +30,25 @@ const signup = async (req, res) => {
     try {
         const checkUser = await User.findOne({ email });
         if (checkUser) {
-            return res.status(400).json({ error: [{ msg: 'Email is already taken' }] });
+            return res.status(400).json({ errors: [{ msg: 'Email is already taken' }] });
         }
-        const hash_pass = await bcrypt.hash(password, 12);
-        const insertUser = await User.create({ username, email, password: hash_pass });
-        if (insertUser) {
-            return res.status(200).json({ message: 'Account created' });
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+        try {
+            const user = await User.create({
+                username,
+                email,
+                password: hash,
+            });
+            const token = createToken(user);
+            return res
+                .status(200)
+                .json({ msg: 'Your account has been created', myToken: token });
+        } catch (error) {
+            return res.status(500).json({ errors: error });
         }
-    }
-    catch (error) {
+    } catch (error) {
         return res.status(500).json({ errors: error });
     }
 }
@@ -46,42 +56,34 @@ const signup = async (req, res) => {
 const signin = async (req, res) => {
 
 
-    const { email, password } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+    const { email, password } = req.body;
     try {
-        const checkUser = await User.findOne({ email });
-        if (!checkUser) {
-            return res.status(400).json({ message: 'Email not found' });
-        }
-        else {
-            const checkPass = await bcrypt.compare(password, checkUser.password);
-            if (!checkPass) {
-                return res.status(400).json({ message: 'Password incorrect' });
+        const user = await User.findOne({ email });
+        if (user) {
+            const matched = await bcrypt.compare(password, user.password);
+            if (matched) {
+                const token = createToken(user);
+                return res
+                    .status(200)
+                    .json({ msg: 'You have login successfully', myToken: token });
+            } else {
+                return res
+                    .status(401)
+                    .json({ errors: [{ msg: 'Password is not correct' }] });
             }
-            else {
-                const token = createToken(checkUser);
-                res.cookie("jwtoken", token, {
-                    expires: new Date(Date.now() + 25892000000),
-                    httpOnly: true
-                })
-                return res.status(200).json({ message: 'Logged in Successfully', token });
-            }
+        } else {
+            return res.status(404).json({ errors: [{ msg: 'Email not found' }] });
         }
     } catch (error) {
-        return res.status(500).json({ errors: error.response.data.errors });
+        return res.status(500).json({ errors: error });
     }
-}
-
-const logout = (res) => {
-    res.clearCookie('jwtoken', { path: '/' });
-    return res.status(200).send('Log out')
 }
 
 module.exports = {
     signup, signup_Validations,
-    signin, signin_Validations,
-    logout
+    signin, signin_Validations
 }

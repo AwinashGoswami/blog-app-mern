@@ -5,13 +5,12 @@ const {
     signup,
     signin,
     signup_Validations,
-    signin_Validations,
-    logout
+    signin_Validations
 } = require('../controllers/userController');
 
 userRoute.post('/signup', signup_Validations, signup);
 userRoute.post('/signin', signin_Validations, signin);
-userRoute.get('/logout', logout);
+userRoute.get('/logout');
 
 
 

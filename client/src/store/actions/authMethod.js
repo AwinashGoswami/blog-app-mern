@@ -10,18 +10,25 @@ import {
 
 export const SignUpController = (user) => {
     return async (dispatch) => {
-        const config = { headers: { 'content-type': 'application/json ' } };
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
         dispatch({ type: SET_LOADER });
         try {
-            const addUser = await axios.post('/signup', user, config);
+            const data  = await axios.post('/signup', user, config);
             dispatch({ type: CLOSE_LOADER });
-            if (addUser) {
-                alert('Sign Up Success');
-            }
+            localStorage.setItem('myToken', data.myToken);
+            dispatch({ type: SET_TOKEN, payload: data.myToken });
         } catch (error) {
-            dispatch({ type: REGISTER_ERRORS, payload: error.response.data.errors });
+            dispatch({ type: CLOSE_LOADER });
+            dispatch({
+                type: REGISTER_ERRORS,
+                payload: error.data,
+            });
         }
-    }
+    };
 }
 
 export const SigninController = (user) => {
@@ -29,9 +36,9 @@ export const SigninController = (user) => {
         try {
             const config = { Headers: { 'content-type': 'application/json' } };
             dispatch({ type: SET_LOADER });
-            const {signin_User} = await axios.post('/signin', user, config);
+            const { signin_User } = await axios.post('/signin', user, config);
             dispatch({ type: CLOSE_LOADER });
-            dispatch({ type: SET_TOKEN, payload: signin_User.token });
+            dispatch({ type: SET_TOKEN, payload: signin_User.myToken });
             if (signin_User) {
                 alert('Log in Success')
             }

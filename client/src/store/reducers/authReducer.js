@@ -18,39 +18,27 @@ const initState = {
     user: '',
 };
 
-const getCookie = (cname) => {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) === 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
+const verifyToken = (token) => {
 
-
-const getToken = () => {
-    let token = getCookie("jwtoken");
-    if (token) {
-        const decodeToken = jwt_decode(token);
-        const expiresIn = new Date(decodeToken.exp * 1000);
-        if (new Date() > expiresIn) {
-            document.cookie = "jwtoken= ";
-            return null;
-        } else {
-            initState.token = token;
-            const { user } = decodeToken;
-            initState.user = user;
-            return decodeToken;
-        }
+    const decodeToken = jwt_decode(token);
+    const expiresIn = new Date(decodeToken.exp * 1000);
+    if (new Date() > expiresIn) {
+        localStorage.removeItem('myToken');
+        return null;
+    } else {
+        return decodeToken;
     }
 };
+
+const token = localStorage.getItem('myToken');
+if (token) {
+    const decoded = verifyToken(token);
+    if (decoded) {
+        initState.token = token;
+        const { user } = decoded;
+        initState.user = user;
+    }
+}
 
 const AuthReducer = (state = initState, action) => {
     if (action.type === SET_LOADER) {
@@ -60,13 +48,14 @@ const AuthReducer = (state = initState, action) => {
     } else if (action.type === REGISTER_ERRORS) {
         return { ...state, registerErrors: action.payload };
     } else if (action.type === SET_TOKEN) {
-        const decoded = getToken(action.payload);
+        const decoded = verifyToken(action.payload);
         const { user } = decoded;
         return {
             ...state,
             token: action.payload,
             user: user,
             loginErrors: [],
+            registerErrors: [],
         };
     } else if (action.type === LOGOUT) {
         return { ...state, token: '', user: '' };

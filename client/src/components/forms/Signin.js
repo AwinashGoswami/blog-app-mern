@@ -51,7 +51,7 @@ const Signin = () => {
                         <span className="fas fa-key"></span>
                         <input type="password" name="password" placeholder="Password" value={user.password} onChange={handleInput} />
                     </div>
-                    <button className="btn mt-3">Login</button>
+                    <button className="btn mt-3" type='submit'>Login</button>
                 </form>
                 <div className="text-center fs-6">
                     <span>Don't have account?</span> <Link to="/signup">Sign up</Link>
