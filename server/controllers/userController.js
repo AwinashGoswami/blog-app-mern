@@ -30,7 +30,7 @@ const signup = async (req, res) => {
     try {
         const checkUser = await User.findOne({ email });
         if (checkUser) {
-            return res.status(400).json({ errors: [{ msg: 'Email is already taken' }] });
+            return res.status(400).json({ errors: 'Email is already taken' });
         }
         // Hash password
         const salt = await bcrypt.genSalt(10);
@@ -44,7 +44,7 @@ const signup = async (req, res) => {
             const token = createToken(user);
             return res
                 .status(200)
-                .json({ msg: 'Your account has been created', myToken: token });
+                .json({ msg: 'Your account has been created', token: token });
         } catch (error) {
             return res.status(500).json({ errors: error });
         }
@@ -54,7 +54,6 @@ const signup = async (req, res) => {
 }
 
 const signin = async (req, res) => {
-
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -69,7 +68,7 @@ const signin = async (req, res) => {
                 const token = createToken(user);
                 return res
                     .status(200)
-                    .json({ msg: 'You have login successfully', myToken: token });
+                    .json({ msg: 'You have login successfully', token: token });
             } else {
                 return res
                     .status(401)

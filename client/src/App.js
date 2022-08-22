@@ -7,20 +7,29 @@ import { About } from "./pages/About";
 import Contact from "./pages/Contact";
 import Signin from "./components/forms/Signin";
 import Signup from "./components/forms/Signup";
-import { Provider } from "react-redux";
-import store from "./store/store";
+import { Provider, useSelector } from "react-redux";
+import Store from "./store";
+import PrivateRoute from "./private/PrivateRoute";
+import Dashboard from './pages/Dashboard'
+import RouteLinks from "./private/RouteLinks";
+import NotFound from "./pages/NotFound";
+import CreatePost from "./components/forms/CreatePost";
 
 const App = () => {
+
   return (
     <>
-      <Provider store={store}>
+      <Provider store={Store}>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/about" element={<About />} />
+          <Route exact path="/contact" element={<Contact />} />
+          <Route exact path="/signin" element={<Signin />} />
+          <Route exact path="/signup" element={<Signup />} />
+          <Route exact path="/create" element={<CreatePost />} />
+          <Route path="*" element={<NotFound />} />
+
         </Routes>
       </Provider>
     </>

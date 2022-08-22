@@ -1,37 +1,40 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { SignUpController } from '../../store/actions/authMethod'
+import { Link, useNavigate } from 'react-router-dom'
 import './form.css'
 import { useDispatch, useSelector } from 'react-redux'
 import toast, { Toaster } from 'react-hot-toast';
+import { signup } from '../../store/asyncMethods/AuthMethods';
 
 
-const Signup = () => {
+const Signup = (props) => {
 
     const dispatch = useDispatch();
-    const { registerErrors = [] } = useSelector((state) => state.AuthReducer)
+    const navigate = useNavigate();
+    const { registerErrors, user } = useSelector(state => state.AuthReducer)
 
-    const [user, setUser] = useState({
+    const [state, setUser] = useState({
         username: '',
         email: '',
         password: ''
     })
 
     const handleInput = (e) => {
-        setUser({ ...user, [e.target.name]: e.target.value })
+        setUser({ ...state, [e.target.name]: e.target.value })
     }
 
-    const submitForm = async (e) => {
+    const submitForm = async e => {
         e.preventDefault();
-        dispatch(SignUpController(user));
+        dispatch(signup(state));
     }
 
     useEffect(() => {
         if (registerErrors.length > 0) {
-            registerErrors.map((error) => toast.error(error.msg));
+            { registerErrors.map((error) => toast.error(error.msg)); }
         }
-    }, [registerErrors])
-
+        if (user) {
+            navigate('/');
+        }
+    }, [registerErrors, user])
 
     return (
         <div>
