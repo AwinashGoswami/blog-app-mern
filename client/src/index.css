@@ -29,6 +29,15 @@ code {
   text-decoration: none
 }
 
-.logout{
+.logout {
   cursor: pointer;
+}
+
+.post_img_preview img{
+  width: 100%;
+  height: auto;
+}
+
+.meta_length{
+  font-size: 1rem;
 }

@@ -29,6 +29,7 @@ const Signup = (props) => {
 
     useEffect(() => {
         if (registerErrors.length > 0) {
+             // eslint-disable-next-line 
             { registerErrors.map((error) => toast.error(error.msg)); }
         }
         if (user) {

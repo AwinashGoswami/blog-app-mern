@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { LOG_OUT } from '../../store/types/UserTypes';
 
@@ -15,7 +15,7 @@ const Navbar = () => {
         dispatch({ type: LOG_OUT });
         navigate('/signin');
     }
-
+ 
     if (user) {
         return (
             <>

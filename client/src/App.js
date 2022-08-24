@@ -7,11 +7,8 @@ import { About } from "./pages/About";
 import Contact from "./pages/Contact";
 import Signin from "./components/forms/Signin";
 import Signup from "./components/forms/Signup";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import Store from "./store";
-import PrivateRoute from "./private/PrivateRoute";
-import Dashboard from './pages/Dashboard'
-import RouteLinks from "./private/RouteLinks";
 import NotFound from "./pages/NotFound";
 import CreatePost from "./components/forms/CreatePost";
 
